@@ -7,10 +7,25 @@
     tools:context="com.leeway.liveat500px.activity.MainActivity">
 
     <!-- Content -->
-    <FrameLayout
-        android:id="@+id/contentContainer"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toobar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            android:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
+        <FrameLayout
+            android:id="@+id/contentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </LinearLayout>
 
     <!-- Menu -->
     <LinearLayout
