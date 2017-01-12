@@ -12,22 +12,22 @@ import com.leeway.liveat500px.view.state.BundleSavedState;
 /**
  * Created by nuuneoi on 11/16/2014.
  */
-public class CustomViewGroupTemplate extends BaseCustomViewGroup {
+public class PhotoListItem extends BaseCustomViewGroup {
 
-    public CustomViewGroupTemplate(Context context) {
+    public PhotoListItem(Context context) {
         super(context);
         initInflate();
         initInstances();
     }
 
-    public CustomViewGroupTemplate(Context context, AttributeSet attrs) {
+    public PhotoListItem(Context context, AttributeSet attrs) {
         super(context, attrs);
         initInflate();
         initInstances();
         initWithAttrs(attrs, 0, 0);
     }
 
-    public CustomViewGroupTemplate(Context context, AttributeSet attrs, int defStyleAttr) {
+    public PhotoListItem(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initInflate();
         initInstances();
@@ -35,7 +35,7 @@ public class CustomViewGroupTemplate extends BaseCustomViewGroup {
     }
 
     @TargetApi(21)
-    public CustomViewGroupTemplate(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public PhotoListItem(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         initInflate();
         initInstances();
@@ -43,7 +43,7 @@ public class CustomViewGroupTemplate extends BaseCustomViewGroup {
     }
 
     private void initInflate() {
-        inflate(getContext(), R.layout.sample_layout, this);
+        inflate(getContext(), R.layout.list_item_photo, this);
     }
 
     private void initInstances() {
@@ -86,4 +86,17 @@ public class CustomViewGroupTemplate extends BaseCustomViewGroup {
         // Restore State from bundle here
     }
 
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int width = MeasureSpec.getSize(widthMeasureSpec); // width in px
+        int height = width * 2 / 3;
+        int newHeightMeasureSpec = MeasureSpec.makeMeasureSpec(
+                height,
+                MeasureSpec.EXACTLY
+        );
+        // child view
+        super.onMeasure(widthMeasureSpec, newHeightMeasureSpec);
+        // self
+        setMeasuredDimension(width, height);
+    }
 }
