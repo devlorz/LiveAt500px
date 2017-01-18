@@ -5,6 +5,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.leeway.liveat500px.dao.PhotoItemDao;
+import com.leeway.liveat500px.manager.PhotoListManager;
 import com.leeway.liveat500px.view.PhotoListItem;
 
 /**
@@ -14,12 +16,16 @@ import com.leeway.liveat500px.view.PhotoListItem;
 public class PhotoListAdapter extends BaseAdapter {
     @Override
     public int getCount() {
-        return 10000;
+        if (PhotoListManager.getInstance().getDao() == null)
+            return 0;
+        if (PhotoListManager.getInstance().getDao().getData() == null)
+            return 0;
+        return PhotoListManager.getInstance().getDao().getData().size();
     }
 
     @Override
     public Object getItem(int i) {
-        return null;
+        return PhotoListManager.getInstance().getDao().getData().get(i);
     }
 
     @Override
@@ -48,7 +54,14 @@ public class PhotoListAdapter extends BaseAdapter {
         } else {
             item = new PhotoListItem(viewGroup.getContext());
         }
+
+        PhotoItemDao dao = (PhotoItemDao) getItem(i);
+        item.setNameText(dao.getCaption());
+        item.setTvDescriptionText(dao.getUsername() + "\n" + dao.getCamera());
+        item.setImageUrl(dao.getImageUrl());
+
         return item;
+
             /*
         } else {
             TextView item;

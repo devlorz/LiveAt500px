@@ -6,7 +6,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.leeway.liveat500px.R;
@@ -14,6 +16,7 @@ import com.leeway.liveat500px.adapter.PhotoListAdapter;
 import com.leeway.liveat500px.dao.PhotoItemCollectionDao;
 import com.leeway.liveat500px.manager.Contextor;
 import com.leeway.liveat500px.manager.HttpManager;
+import com.leeway.liveat500px.manager.PhotoListManager;
 
 import java.io.IOException;
 
@@ -73,40 +76,44 @@ public class MainFragment extends Fragment {
         listView.setAdapter(listAdapter);
 
         Call<PhotoItemCollectionDao> call = HttpManager.getInstance().getService().loadPhotoList();
-        call.enqueue(new Callback<PhotoItemCollectionDao>() {
-            @Override
-            public void onResponse(Call<PhotoItemCollectionDao> call,
-                                   Response<PhotoItemCollectionDao> response) {
-                if (response.isSuccessful()) {
-                    PhotoItemCollectionDao dao = response.body();
-                    Toast.makeText(Contextor.getInstance().getContext(),
-                            dao.getData().get(0).getCaption(),
-                            Toast.LENGTH_SHORT)
-                            .show();
-                } else {
-                    // handle
-                    try {
-                        Toast.makeText(Contextor.getInstance().getContext(),
-                                response.errorBody().string(),
-                                Toast.LENGTH_SHORT)
-                                .show();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
+        call.enqueue(callbackDao);
+    }
 
-            @Override
-            public void onFailure(Call<PhotoItemCollectionDao> call,
-                                  Throwable t) {
-                // handle
+    Callback<PhotoItemCollectionDao> callbackDao = new Callback<PhotoItemCollectionDao>() {
+        @Override
+        public void onResponse(Call<PhotoItemCollectionDao> call,
+                               Response<PhotoItemCollectionDao> response) {
+            if (response.isSuccessful()) {
+                PhotoItemCollectionDao dao = response.body();
+                PhotoListManager.getInstance().setDao(dao);
+                listAdapter.notifyDataSetChanged();
                 Toast.makeText(Contextor.getInstance().getContext(),
-                        t.toString(),
+                        dao.getData().get(0).getCaption(),
                         Toast.LENGTH_SHORT)
                         .show();
+            } else {
+                // handle
+                try {
+                    Toast.makeText(Contextor.getInstance().getContext(),
+                            response.errorBody().string(),
+                            Toast.LENGTH_SHORT)
+                            .show();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-        });
-    }
+        }
+
+        @Override
+        public void onFailure(Call<PhotoItemCollectionDao> call,
+                              Throwable t) {
+            // handle
+            Toast.makeText(Contextor.getInstance().getContext(),
+                    t.toString(),
+                    Toast.LENGTH_SHORT)
+                    .show();
+        }
+    };
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
