@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.leeway.liveat500px.R;
 import com.leeway.liveat500px.view.state.BundleSavedState;
 
@@ -118,6 +119,8 @@ public class PhotoListItem extends BaseCustomViewGroup {
     }
 
     public void setImageUrl(String url) {
-        // TODO: Load Image
+        Glide.with(getContext())
+                .load(url)
+                .into(ivImg);
     }
 }
