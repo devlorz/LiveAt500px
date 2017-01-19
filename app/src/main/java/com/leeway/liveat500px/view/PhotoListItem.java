@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.leeway.liveat500px.R;
 import com.leeway.liveat500px.view.state.BundleSavedState;
 
@@ -121,6 +122,7 @@ public class PhotoListItem extends BaseCustomViewGroup {
     public void setImageUrl(String url) {
         Glide.with(getContext())
                 .load(url)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(ivImg);
     }
 }
