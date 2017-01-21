@@ -3,9 +3,11 @@ package com.leeway.liveat500px.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -32,6 +34,10 @@ public class MainFragment extends Fragment {
 
     ListView listView;
     PhotoListAdapter listAdapter;
+
+    SwipeRefreshLayout swipeRefreshLayout;
+
+    PhotoListManager photoListManager;
 
     public MainFragment() {
         super();
@@ -71,10 +77,87 @@ public class MainFragment extends Fragment {
         // Init 'View' instance(s) with rootView.findViewById here
         // Note: State of variable initialized here could not be saved
         //       in onSavedInstanceState
+        photoListManager = new PhotoListManager();
+
         listView = (ListView) rootView.findViewById(R.id.listView);
         listAdapter = new PhotoListAdapter();
         listView.setAdapter(listAdapter);
 
+        swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshData();
+            }
+        });
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int i) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view,
+                                 int firstVisibleItem,
+                                 int visibleItemCount,
+                                 int totalItemCount) {
+                swipeRefreshLayout.setEnabled(firstVisibleItem == 0);
+            }
+        });
+
+        refreshData();
+    }
+
+    private void refreshData() {
+        if (photoListManager.getCount() == 0)
+            reloadData();
+        else
+            reloadDataNewer();
+    }
+
+    private void reloadDataNewer() {
+        int maxId = photoListManager.getMaximumId();
+        Call<PhotoItemCollectionDao> call = HttpManager.getInstance()
+                .getService()
+                .loadPhotoListAfterId(maxId);
+        call.enqueue(new Callback<PhotoItemCollectionDao>() {
+            @Override
+            public void onResponse(Call<PhotoItemCollectionDao> call, Response<PhotoItemCollectionDao> response) {
+                swipeRefreshLayout.setRefreshing(false);
+                if (response.isSuccessful()) {
+                    PhotoItemCollectionDao dao = response.body();
+                    photoListManager.setDao(dao);
+                    listAdapter.setDao(dao);
+                    listAdapter.notifyDataSetChanged();
+                    Toast.makeText(Contextor.getInstance().getContext(),
+                            "Load Completed",
+                            Toast.LENGTH_SHORT)
+                            .show();
+                } else {
+                    // handle
+                    try {
+                        Toast.makeText(Contextor.getInstance().getContext(),
+                                response.errorBody().string(),
+                                Toast.LENGTH_SHORT)
+                                .show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PhotoItemCollectionDao> call, Throwable t) {
+                swipeRefreshLayout.setRefreshing(false);
+                Toast.makeText(Contextor.getInstance().getContext(),
+                        t.toString(),
+                        Toast.LENGTH_SHORT)
+                        .show();
+            }
+        });
+    }
+
+    private void reloadData() {
         Call<PhotoItemCollectionDao> call = HttpManager.getInstance().getService().loadPhotoList();
         call.enqueue(callbackDao);
     }
@@ -83,8 +166,10 @@ public class MainFragment extends Fragment {
         @Override
         public void onResponse(Call<PhotoItemCollectionDao> call,
                                Response<PhotoItemCollectionDao> response) {
+            swipeRefreshLayout.setRefreshing(false);
             if (response.isSuccessful()) {
                 PhotoItemCollectionDao dao = response.body();
+                photoListManager.setDao(dao);
                 listAdapter.setDao(dao);
                 listAdapter.notifyDataSetChanged();
                 Toast.makeText(Contextor.getInstance().getContext(),
@@ -108,6 +193,7 @@ public class MainFragment extends Fragment {
         public void onFailure(Call<PhotoItemCollectionDao> call,
                               Throwable t) {
             // handle
+            swipeRefreshLayout.setRefreshing(false);
             Toast.makeText(Contextor.getInstance().getContext(),
                     t.toString(),
                     Toast.LENGTH_SHORT)
