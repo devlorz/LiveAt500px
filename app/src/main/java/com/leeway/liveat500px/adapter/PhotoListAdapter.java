@@ -96,4 +96,8 @@ public class PhotoListAdapter extends BaseAdapter {
         }
         */
     }
+
+    public void increaseLastPosition (int amount) {
+        lastPosition += amount;
+    }
 }
