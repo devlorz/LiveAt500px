@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.leeway.liveat500px.R;
 import com.leeway.liveat500px.adapter.PhotoListAdapter;
 import com.leeway.liveat500px.dao.PhotoItemCollectionDao;
+import com.leeway.liveat500px.datatype.MutableInteger;
 import com.leeway.liveat500px.manager.Contextor;
 import com.leeway.liveat500px.manager.HttpManager;
 import com.leeway.liveat500px.manager.PhotoListManager;
@@ -48,6 +49,8 @@ public class MainFragment extends Fragment {
     PhotoListManager photoListManager;
 
     Button btnNewPhotos;
+
+    MutableInteger lastPositionInteger;
 
     /***********
      * Functions
@@ -85,6 +88,7 @@ public class MainFragment extends Fragment {
     private void init(Bundle savedInstanceState) {
         // Init Fragment level's variable(s) here
         photoListManager = new PhotoListManager();
+        lastPositionInteger = new MutableInteger(-1);
     }
 
     @SuppressWarnings("UnusedParameters")
@@ -98,7 +102,7 @@ public class MainFragment extends Fragment {
         btnNewPhotos.setOnClickListener(buttonClickListener);
 
         listView = (ListView) rootView.findViewById(R.id.listView);
-        listAdapter = new PhotoListAdapter();
+        listAdapter = new PhotoListAdapter(lastPositionInteger);
         listAdapter.setDao(photoListManager.getDao());
         listView.setAdapter(listAdapter);
 
@@ -148,6 +152,8 @@ public class MainFragment extends Fragment {
         // Save Instance (Fragment level's variables) State here
         outState.putBundle("photoListManager",
                 photoListManager.onSaveInstanceState());
+        outState.putBundle("lastPositionInteger",
+                lastPositionInteger.onSaveInstanceState());
     }
 
     @SuppressWarnings("UnusedParameters")
@@ -155,6 +161,9 @@ public class MainFragment extends Fragment {
         // Restore Instance (Fragment level's variables) State here
         photoListManager.onRestoreInstanceState(
                 savedInstanceState.getBundle("photoListManager"));
+        lastPositionInteger.onRestoreInstanceState(
+                savedInstanceState.getBundle("lastPositionInteger")
+        );
     }
 
 
