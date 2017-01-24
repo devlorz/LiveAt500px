@@ -1,5 +1,7 @@
 package com.leeway.liveat500px.fragment;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -25,6 +27,9 @@ import com.leeway.liveat500px.manager.Contextor;
 import com.leeway.liveat500px.manager.HttpManager;
 import com.leeway.liveat500px.manager.PhotoListManager;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import retrofit2.Call;
