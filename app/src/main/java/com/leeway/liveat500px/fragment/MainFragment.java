@@ -84,6 +84,7 @@ public class MainFragment extends Fragment {
     @SuppressWarnings("UnusedParameters")
     private void init(Bundle savedInstanceState) {
         // Init Fragment level's variable(s) here
+        photoListManager = new PhotoListManager();
     }
 
     @SuppressWarnings("UnusedParameters")
@@ -91,7 +92,6 @@ public class MainFragment extends Fragment {
         // Init 'View' instance(s) with rootView.findViewById here
         // Note: State of variable initialized here could not be saved
         //       in onSavedInstanceState
-        photoListManager = new PhotoListManager();
 
         btnNewPhotos = (Button) rootView.findViewById(R.id.btnNewPhotos);
 
@@ -99,13 +99,15 @@ public class MainFragment extends Fragment {
 
         listView = (ListView) rootView.findViewById(R.id.listView);
         listAdapter = new PhotoListAdapter();
+        listAdapter.setDao(photoListManager.getDao());
         listView.setAdapter(listAdapter);
 
         swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(pullToRefreshListener);
         listView.setOnScrollListener(listViewScrollListener);
 
-        refreshData();
+        if (savedInstanceState == null)
+            refreshData();
     }
 
     private void refreshData() {
@@ -144,11 +146,15 @@ public class MainFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         // Save Instance (Fragment level's variables) State here
+        outState.putBundle("photoListManager",
+                photoListManager.onSaveInstanceState());
     }
 
     @SuppressWarnings("UnusedParameters")
     private void onRestoreInstanceState(Bundle savedInstanceState) {
         // Restore Instance (Fragment level's variables) State here
+        photoListManager.onRestoreInstanceState(
+                savedInstanceState.getBundle("photoListManager"));
     }
 
 
