@@ -1,6 +1,7 @@
 package com.leeway.liveat500px.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -20,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.leeway.liveat500px.R;
+import com.leeway.liveat500px.activity.MoreInfoActivity;
 import com.leeway.liveat500px.adapter.PhotoListAdapter;
 import com.leeway.liveat500px.dao.PhotoItemCollectionDao;
 import com.leeway.liveat500px.datatype.MutableInteger;
@@ -110,6 +113,8 @@ public class MainFragment extends Fragment {
         listAdapter = new PhotoListAdapter(lastPositionInteger);
         listAdapter.setDao(photoListManager.getDao());
         listView.setAdapter(listAdapter);
+
+        listView.setOnItemClickListener(listViewItemClickListener);
 
         swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(pullToRefreshListener);
@@ -238,6 +243,15 @@ public class MainFragment extends Fragment {
                     }
                 }
             }
+        }
+    };
+
+    AdapterView.OnItemClickListener listViewItemClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+            Intent intent = new Intent(getContext(),
+                    MoreInfoActivity.class);
+            startActivity(intent);
         }
     };
 
