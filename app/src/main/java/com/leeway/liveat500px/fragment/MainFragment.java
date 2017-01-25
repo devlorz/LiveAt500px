@@ -25,6 +25,7 @@ import com.leeway.liveat500px.R;
 import com.leeway.liveat500px.activity.MoreInfoActivity;
 import com.leeway.liveat500px.adapter.PhotoListAdapter;
 import com.leeway.liveat500px.dao.PhotoItemCollectionDao;
+import com.leeway.liveat500px.dao.PhotoItemDao;
 import com.leeway.liveat500px.datatype.MutableInteger;
 import com.leeway.liveat500px.manager.Contextor;
 import com.leeway.liveat500px.manager.HttpManager;
@@ -44,6 +45,10 @@ import retrofit2.Response;
  * Created by nuuneoi on 11/16/2014.
  */
 public class MainFragment extends Fragment {
+
+    public interface FragmentListener {
+        void onPhotoItemClicked(PhotoItemDao dao);
+    }
 
     /**********
      * Variables
@@ -249,9 +254,11 @@ public class MainFragment extends Fragment {
     AdapterView.OnItemClickListener listViewItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-            Intent intent = new Intent(getContext(),
-                    MoreInfoActivity.class);
-            startActivity(intent);
+            if (position < photoListManager.getCount()) {
+                PhotoItemDao dao = photoListManager.getDao().getData().get(position);
+                FragmentListener listener = (FragmentListener) getActivity();
+                listener.onPhotoItemClicked(dao);
+            }
         }
     };
 
