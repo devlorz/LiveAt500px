@@ -62,6 +62,7 @@ public class MoreInfoFragment extends Fragment {
     @SuppressWarnings("UnusedParameters")
     private void init(Bundle savedInstanceState) {
         // Init Fragment level's variable(s) here
+        setHasOptionsMenu(true);
     }
 
     @SuppressWarnings("UnusedParameters")
@@ -120,4 +121,9 @@ public class MoreInfoFragment extends Fragment {
         // Restore Instance (Fragment level's variables) State here
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_more_info,menu);
+    }
 }
