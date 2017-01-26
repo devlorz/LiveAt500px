@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.leeway.liveat500px.R;
+import com.leeway.liveat500px.view.SlidingTabLayout;
 
 
 /**
@@ -20,6 +21,7 @@ import com.leeway.liveat500px.R;
 public class MoreInfoFragment extends Fragment {
 
     ViewPager viewPager;
+    SlidingTabLayout slidingTabLayout;
 
     public MoreInfoFragment() {
         super();
@@ -79,7 +81,24 @@ public class MoreInfoFragment extends Fragment {
             public int getCount() {
                 return 3;
             }
+
+            @Override
+            public CharSequence getPageTitle(int position) {
+                switch (position) {
+                    case 0:
+                        return "Summary";
+                    case 1:
+                        return "Info";
+                    case 2:
+                        return "Tags";
+                    default:
+                        return "";
+                }
+            }
         });
+
+        slidingTabLayout = (SlidingTabLayout) rootView.findViewById(R.id.slidingTabLayout);
+        slidingTabLayout.setViewPager(viewPager);
     }
 
     @Override
