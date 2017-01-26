@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import com.leeway.liveat500px.R;
+import com.leeway.liveat500px.dao.PhotoItemDao;
 import com.leeway.liveat500px.fragment.MainFragment;
 import com.leeway.liveat500px.fragment.MoreInfoFragment;
 
@@ -17,9 +18,11 @@ public class MoreInfoActivity extends AppCompatActivity {
 
         initInstances();
 
+        PhotoItemDao dao = getIntent().getParcelableExtra("dao");
+
         if(savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.contentContainer, MoreInfoFragment.newInstance())
+                    .add(R.id.contentContainer, MoreInfoFragment.newInstance(dao))
                     .commit();
         }
     }
